@@ -1,4 +1,4 @@
-package com.example.myproject
+package com.example.myproject.presentaion.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -77,21 +77,21 @@ class MainViewModel:ViewModel() {
     }
 
 
-//    private val _categoryResponse = MutableStateFlow<CategoriesRequest?>(null)
-//    val categoryResponse: StateFlow<CategoriesRequest?> get() = _categoryResponse
-//
-//    fun getCategory( token:String,lang:String) {
-//        viewModelScope.launch {
-//            try {
-//                val response =
-//                    RetrofitInstance.apiService.getCategories(token,lang)
-//                if (response.isSuccessful) {
-//                    _categoryResponse.value = response.body()
-//                }
-//            } catch (Exception: Exception) {
-//                println(Exception)
-//            }
-//        }
-//    }
+    private val _categoryResponse = MutableStateFlow<CategoriesRequest?>(null)
+    val categoryResponse: StateFlow<CategoriesRequest?> get() = _categoryResponse
+
+    fun getCategory( token:String,lang:String) {
+        viewModelScope.launch {
+            try {
+                val response =
+                    RetrofitInstance.apiService.getCategories(token,lang)
+                if (response.isSuccessful) {
+                    _categoryResponse.value = response.body()
+                }
+            } catch (Exception: Exception) {
+                println(Exception)
+            }
+        }
+    }
 
 }

@@ -1,4 +1,4 @@
-package com.example.myproject.screens
+package com.example.myproject.presentaion.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.example.myproject.MainViewModel
+import com.example.myproject.presentaion.viewmodel.MainViewModel
 import com.example.myproject.R
 import com.example.myproject.data.model.LoginRequest
 import com.example.myproject.util.CustomOutlinedTextField

@@ -1,4 +1,4 @@
-package com.example.myproject.screens
+package com.example.myproject.presentaion.screens
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.animation.core.*
@@ -33,7 +33,7 @@ fun AnimatedShimmer() {
         targetValue = 1000f,
         animationSpec = infiniteRepeatable(
             animation = tween(
-                durationMillis = 1000,
+                durationMillis = 750,
                 easing = FastOutSlowInEasing
             ),
             repeatMode = RepeatMode.Reverse
@@ -106,11 +106,11 @@ fun ShimmerItem(brush: Brush) {
             columns = GridCells.Fixed(2),
             contentPadding = PaddingValues(10.dp),
         ) {
-            items(4) {
+            items(6) {
                 Spacer(
                     modifier = Modifier
                         .padding(5.dp)
-                        .height(200.dp)
+                        .height(180.dp)
                         .width(180.dp)
                         .clip(RoundedCornerShape(25.dp))
                         .background(brush)

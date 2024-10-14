@@ -1,12 +1,13 @@
-package com.example.myproject.screens
+package com.example.myproject.presentaion.screens
 
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,17 +15,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,13 +36,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
-import com.example.myproject.MainViewModel
+import com.example.myproject.presentaion.viewmodel.MainViewModel
+import com.example.myproject.R
 import com.example.myproject.util.FavouriteButton
 
 class HomeScreen(val token: String) : Screen {
@@ -53,23 +55,29 @@ class HomeScreen(val token: String) : Screen {
         val viewModel = remember { MainViewModel() }
         val homeData = viewModel.homeResponse.collectAsState()
         val isLoading = viewModel.isLoading.collectAsState()
+        val categoryData = viewModel.categoryResponse.collectAsState()
+        val navigator = LocalNavigator.currentOrThrow
+
 
         LaunchedEffect(Unit) {
             viewModel.getHomeData(token = token, lang = "en")
+            viewModel.getCategory(token = token, lang = "en")
         }
 
         Column(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxSize()
+                .background(Color(0xFFF3F3F3))
         ) {
             if (isLoading.value) {
                 AnimatedShimmer()
             } else {
+                Spacer(modifier = Modifier.height(10.dp))
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.height(150.dp)
+                    modifier = Modifier.height(110.dp)
                 ) {
                     items(homeData.value?.data?.banners ?: emptyList()) {
                         Card(
@@ -86,21 +94,40 @@ class HomeScreen(val token: String) : Screen {
                         }
                     }
                 }
-                Row(
+                LazyRow(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 15.dp, end = 15.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    repeat(4) {
-                        Spacer(
-                            modifier = Modifier
-                                .size(80.dp)
-                                .clip(CircleShape)
-                                .background(Color.Gray)
-                        )
+                    item {
+                        Box(contentAlignment = Alignment.Center
+                            ,modifier = Modifier.padding(5.dp)) {
+                            Canvas(modifier = Modifier.size(80.dp), onDraw = {
+                                drawCircle(color = Color.White)
+                            })
+                            Image(
+                                painter = painterResource(id = R.drawable.all),
+                                contentDescription = null,
+                                modifier = Modifier.size(45.dp)
+                            )
+                        }
                     }
+                    items(categoryData.value?.data?.data?: emptyList()){
+                        Box(contentAlignment = Alignment.Center
+                            ,modifier = Modifier.padding(5.dp)) {
+                            Canvas(modifier = Modifier.size(80.dp), onDraw = {
+                                drawCircle(color = Color.White)
+                            })
+                            AsyncImage(
+                                model = it.image,
+                                contentDescription = null,
+                                modifier = Modifier.size(60.dp)
+                            )
+                        }
+                    }
+
                 }
                 Spacer(modifier = Modifier.height(10.dp))
                 LazyVerticalGrid(
@@ -133,6 +160,9 @@ class HomeScreen(val token: String) : Screen {
                                             .fillMaxWidth()
                                             .height(120.dp)
                                             .clip(RoundedCornerShape(12.dp))
+                                            .clickable {
+//                                                navigator.push(DetailsScreen(product))
+                                            }
                                     )
 
                                     Spacer(modifier = Modifier.height(8.dp))
