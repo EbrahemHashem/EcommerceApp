@@ -68,40 +68,13 @@ fun ShimmerItem(brush: Brush) {
             Spacer(
                 modifier = Modifier
                     .height(80.dp)
-                    .weight(0.4f)
-                    .padding(10.dp)
-                    .clip(RoundedCornerShape(10.dp))
+                    .weight(0.9f)
+                    .padding(5.dp)
+                    .clip(RoundedCornerShape(15.dp))
                     .background(brush)
             )
-            Spacer(
-                modifier = Modifier
-                    .height(80.dp)
-                    .weight(0.4f)
-                    .padding(10.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(brush)
 
-            )
         }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 15.dp,end = 15.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            repeat(4) {
-                Spacer(
-                    modifier = Modifier
-                        .size(80.dp)
-                        .clip(CircleShape)
-                        .background(brush)
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(10.dp))
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             contentPadding = PaddingValues(10.dp),
@@ -110,7 +83,7 @@ fun ShimmerItem(brush: Brush) {
                 Spacer(
                     modifier = Modifier
                         .padding(5.dp)
-                        .height(180.dp)
+                        .height(200.dp)
                         .width(180.dp)
                         .clip(RoundedCornerShape(25.dp))
                         .background(brush)
