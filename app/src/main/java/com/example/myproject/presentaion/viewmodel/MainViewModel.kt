@@ -13,19 +13,20 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class MainViewModel:ViewModel() {
+class MainViewModel : ViewModel() {
 
     private val _loginResponse = MutableStateFlow<LoginResponse?>(null)
     val loginResponse: StateFlow<LoginResponse?> get() = _loginResponse
 
-    fun login( loginRequest: LoginRequest,onSuccess: (String) -> Unit) {
+    //    login
+    fun login(loginRequest: LoginRequest, onSuccess: (String) -> Unit) {
         viewModelScope.launch {
             try {
                 val response =
                     RetrofitInstance.apiService.login(loginRequest)
                 if (response.isSuccessful) {
                     _loginResponse.value = response.body()
-                    onSuccess(response.body()?.data?.token?:"")
+                    onSuccess(response.body()?.data?.token ?: "")
                 }
             } catch (Exception: Exception) {
                 println(Exception)
@@ -35,8 +36,9 @@ class MainViewModel:ViewModel() {
 
     private val _registerResponse = MutableStateFlow<RegisterResponse?>(null)
     val registerResponse: StateFlow<RegisterResponse?> get() = _registerResponse
+// register
 
-    fun register( registerRequest: RegisterRequest) {
+    fun register(registerRequest: RegisterRequest) {
         viewModelScope.launch {
             try {
                 val response =
@@ -55,21 +57,24 @@ class MainViewModel:ViewModel() {
 
     private val _homeResponse = MutableStateFlow<HomeResponse?>(null)
     val homeResponse: StateFlow<HomeResponse?> get() = _homeResponse
+//    getHomeData
 
-    fun getHomeData( token:String,lang:String) {
+    fun getHomeData(
+        token: String,
+        lang: String,
+    ) {
         viewModelScope.launch {
             try {
                 _isLoading.value = true
                 val response =
-                    RetrofitInstance.apiService.getHomeData(token,lang)
+                    RetrofitInstance.apiService.getHomeData(token, lang)
                 if (response.isSuccessful) {
                     _homeResponse.value = response.body()
                 }
 
             } catch (Exception: Exception) {
                 println(Exception)
-            }
-            finally {
+            } finally {
                 _isLoading.value = false
 
             }
@@ -80,11 +85,12 @@ class MainViewModel:ViewModel() {
     private val _categoryResponse = MutableStateFlow<CategoriesRequest?>(null)
     val categoryResponse: StateFlow<CategoriesRequest?> get() = _categoryResponse
 
-    fun getCategory( token:String,lang:String) {
+    //get category
+    fun getCategory(token: String, lang: String) {
         viewModelScope.launch {
             try {
                 val response =
-                    RetrofitInstance.apiService.getCategories(token,lang)
+                    RetrofitInstance.apiService.getCategories(token, lang)
                 if (response.isSuccessful) {
                     _categoryResponse.value = response.body()
                 }
@@ -93,5 +99,6 @@ class MainViewModel:ViewModel() {
             }
         }
     }
+
 
 }

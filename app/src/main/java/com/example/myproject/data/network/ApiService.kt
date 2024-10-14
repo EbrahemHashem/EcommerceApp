@@ -33,7 +33,7 @@ interface ApiService {
     @GET("home")
     suspend fun getHomeData(
         @Header("Authorization")
-        token: String, @Header("lang") lang: String
+        token: String, @Header("lang") lang: String,
     ): Response<HomeResponse>
 
 }

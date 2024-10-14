@@ -49,7 +49,8 @@ import com.example.myproject.presentaion.viewmodel.MainViewModel
 import com.example.myproject.R
 import com.example.myproject.util.FavouriteButton
 
-class HomeScreen(val token: String) : Screen {
+class HomeScreen(val token: String) :
+    Screen {
     @Composable
     override fun Content() {
         val viewModel = remember { MainViewModel() }
@@ -60,14 +61,18 @@ class HomeScreen(val token: String) : Screen {
 
 
         LaunchedEffect(Unit) {
-            viewModel.getHomeData(token = token, lang = "en")
+            viewModel.getHomeData(
+                token = token,
+                lang = "en",
+            )
             viewModel.getCategory(token = token, lang = "en")
         }
 
         Column(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .background(Color(0xFFF3F3F3))
         ) {
             if (isLoading.value) {
@@ -89,7 +94,7 @@ class HomeScreen(val token: String) : Screen {
                         ) {
                             AsyncImage(
                                 model = it.image, contentDescription = null,
-                                contentScale = ContentScale.FillBounds
+                                contentScale = ContentScale.FillBounds,
                             )
                         }
                     }
@@ -102,8 +107,9 @@ class HomeScreen(val token: String) : Screen {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     item {
-                        Box(contentAlignment = Alignment.Center
-                            ,modifier = Modifier.padding(5.dp)) {
+                        Box(
+                            contentAlignment = Alignment.Center, modifier = Modifier.padding(5.dp)
+                        ) {
                             Canvas(modifier = Modifier.size(80.dp), onDraw = {
                                 drawCircle(color = Color.White)
                             })
@@ -111,12 +117,14 @@ class HomeScreen(val token: String) : Screen {
                                 painter = painterResource(id = R.drawable.all),
                                 contentDescription = null,
                                 modifier = Modifier.size(45.dp)
+
                             )
                         }
                     }
-                    items(categoryData.value?.data?.data?: emptyList()){
-                        Box(contentAlignment = Alignment.Center
-                            ,modifier = Modifier.padding(5.dp)) {
+                    items(categoryData.value?.data?.data ?: emptyList()) {
+                        Box(
+                            contentAlignment = Alignment.Center, modifier = Modifier.padding(5.dp)
+                        ) {
                             Canvas(modifier = Modifier.size(80.dp), onDraw = {
                                 drawCircle(color = Color.White)
                             })
@@ -135,7 +143,7 @@ class HomeScreen(val token: String) : Screen {
                     contentPadding = PaddingValues(8.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    items(homeData.value?.data?.products ?: emptyList()) { product ->
+                    items(homeData.value?.data?.products ?: emptyList()) {
                         Card(
                             modifier = Modifier
                                 .padding(8.dp)
@@ -143,7 +151,7 @@ class HomeScreen(val token: String) : Screen {
                             elevation = CardDefaults.cardElevation(8.dp),
                             shape = RoundedCornerShape(12.dp) // Rounded corners for a softer look
                         ) {
-                            var isFavourite by remember { mutableStateOf(product.in_favorites) }
+                            var isFavourite by remember { mutableStateOf(it.in_favorites) }
                             Box(
                                 modifier = Modifier.fillMaxSize() // Use Box to allow for overlay of elements
                             ) {
@@ -153,7 +161,7 @@ class HomeScreen(val token: String) : Screen {
                                     verticalArrangement = Arrangement.Center
                                 ) {
                                     AsyncImage(
-                                        model = product.image,
+                                        model = it.image,
                                         contentDescription = null,
                                         contentScale = ContentScale.FillBounds,
                                         modifier = Modifier
@@ -161,14 +169,15 @@ class HomeScreen(val token: String) : Screen {
                                             .height(120.dp)
                                             .clip(RoundedCornerShape(12.dp))
                                             .clickable {
-//                                                navigator.push(DetailsScreen(product))
+//                                                navigate to details screen
+                                                navigator.push(DetailsScreen(it))
                                             }
                                     )
 
                                     Spacer(modifier = Modifier.height(8.dp))
 
                                     Text(
-                                        text = product.name,
+                                        text = it.name,
                                         modifier = Modifier.padding(
                                             start = 8.dp, end = 8.dp, bottom = 4.dp
                                         ),
@@ -181,7 +190,7 @@ class HomeScreen(val token: String) : Screen {
                                     Spacer(modifier = Modifier.height(4.dp))
 
                                     Text(
-                                        text = "$${product.price}",
+                                        text = "$${it.price}",
                                         modifier = Modifier.padding(horizontal = 8.dp),
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.SemiBold,
