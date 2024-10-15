@@ -158,7 +158,8 @@ class HomeScreen(val token: String) : Screen {
                                                     .height(120.dp)
                                                     .clip(RoundedCornerShape(12.dp))
                                                     .clickable {
-//                                                navigator.push(DetailsScreen(product))
+//                                                        navigate to details screen
+                                                navigator.push(DetailsScreen(product))
                                                     }
                                             )
 
