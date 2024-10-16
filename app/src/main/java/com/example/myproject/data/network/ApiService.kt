@@ -6,6 +6,9 @@ import com.example.myproject.data.model.LoginRequest
 import com.example.myproject.data.model.LoginResponse
 import com.example.myproject.data.model.RegisterRequest
 import com.example.myproject.data.model.RegisterResponse
+import com.example.myproject.data.model.favourite.AddOrDeleteFavouriteRequest
+import com.example.myproject.data.model.favourite.AddOrDeleteResponse
+import com.example.myproject.data.model.favourite.FavouritesResponse
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
@@ -27,14 +30,31 @@ interface ApiService {
     @GET("categories")
     suspend fun getCategories(
         @Header("Authorization")
-        token: String, @Header("lang") lang: String
+        token: String,
+        @Header("lang") lang: String,
     ): Response<CategoriesRequest>
 
     @GET("home")
     suspend fun getHomeData(
         @Header("Authorization")
-        token: String, @Header("lang") lang: String,
+        token: String,
+        @Header("lang") lang: String,
     ): Response<HomeResponse>
+
+    //get favourites
+    @GET("favorites")
+    suspend fun getFavouritesData(
+        @Header("Authorization") token: String,
+        @Header("lang") lang: String,
+    ): Response<FavouritesResponse>
+
+    //    add or delete favourites
+    @POST("favorites")
+    suspend fun addOrDeleteFavourites(
+        @Header("Authorization") token: String,
+        @Header("lang") lang: String,
+        @Body addOrDeleteFavouriteRequest: AddOrDeleteFavouriteRequest,
+    ): Response<AddOrDeleteResponse>
 
 }
 
