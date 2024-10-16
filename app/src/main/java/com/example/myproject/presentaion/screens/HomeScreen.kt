@@ -59,15 +59,24 @@ import com.example.myproject.presentaion.viewmodel.MainViewModel
 import com.example.myproject.R
 import com.example.myproject.util.CustomBottomNavigationBar
 import com.example.myproject.util.FavouriteButton
+import com.example.myproject.util.FavouriteScreen
 
 class HomeScreen(val token: String) : Screen {
     @Composable
     override fun Content() {
+        HomeContent()
+
+    }
+
+    @Composable
+    fun HomeContent(){
         val viewModel = remember { MainViewModel() }
         val homeData = viewModel.homeResponse.collectAsState()
         val isLoading = viewModel.isLoading.collectAsState()
         val navigator = LocalNavigator.currentOrThrow
         val search = remember { mutableStateOf("") }
+        val selectedItem = remember { mutableStateOf(0) }
+
 
 
 
@@ -82,7 +91,9 @@ class HomeScreen(val token: String) : Screen {
 
             Scaffold(
                 bottomBar = {
-                    CustomBottomNavigationBar()
+                    CustomBottomNavigationBar(
+                        selectedItem = selectedItem.value,
+                    )
                 },
                 content = {
 
@@ -106,8 +117,7 @@ class HomeScreen(val token: String) : Screen {
                                 color = Color.Black
                             ),
                             modifier = Modifier
-                                .fillMaxWidth(0.9f)
-                            ,
+                                .fillMaxWidth(0.9f),
                             placeholder = {
                                 Text(
                                     text = "Search",
@@ -159,7 +169,7 @@ class HomeScreen(val token: String) : Screen {
                                                     .clip(RoundedCornerShape(12.dp))
                                                     .clickable {
 //                                                        navigate to details screen
-                                                navigator.push(DetailsScreen(product))
+                                                        navigator.push(DetailsScreen(product))
                                                     }
                                             )
 
@@ -191,8 +201,10 @@ class HomeScreen(val token: String) : Screen {
                                                 Spacer(modifier = Modifier.width(5.dp))
 
                                                 IconButton(onClick = { /*TODO*/ }) {
-                                                    Icon(imageVector = Icons.Default.Add,
-                                                        contentDescription =null )
+                                                    Icon(
+                                                        imageVector = Icons.Default.Add,
+                                                        contentDescription = null
+                                                    )
                                                 }
                                             }
 
@@ -216,5 +228,6 @@ class HomeScreen(val token: String) : Screen {
                 }
             )
         }//else
+
     }
 }
