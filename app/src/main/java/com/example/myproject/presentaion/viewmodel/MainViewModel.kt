@@ -8,6 +8,8 @@ import com.example.myproject.data.model.LoginRequest
 import com.example.myproject.data.model.LoginResponse
 import com.example.myproject.data.model.RegisterRequest
 import com.example.myproject.data.model.RegisterResponse
+import com.example.myproject.data.model.favourite.AddOrDeleteFavouriteRequest
+import com.example.myproject.data.model.favourite.FavouritesResponse
 import com.example.myproject.data.network.RetrofitInstance
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -97,6 +99,45 @@ class MainViewModel : ViewModel() {
             } catch (Exception: Exception) {
                 println(Exception)
             }
+        }
+    }
+
+    //    favourites
+    private val _favouriteResponse = MutableStateFlow<FavouritesResponse?>(null)
+    val favouriteResponse: StateFlow<FavouritesResponse?> get() = _favouriteResponse
+    fun getFavourites(token: String, lang: String) {
+        viewModelScope.launch {
+            try {
+                val response =
+                    RetrofitInstance.apiService.getFavouritesData(token, lang)
+                if (response.isSuccessful) {
+                    _favouriteResponse.value = response.body()
+                }
+            } catch (Exception: Exception) {
+                println(Exception)
+            }
+        }
+    }
+
+    fun getAddFvourites(
+        token: String,
+        addOrDeleteFavouriteRequest: AddOrDeleteFavouriteRequest,
+        onSuccess: (String?) -> Unit,
+    ) {
+        viewModelScope.launch {
+            try {
+                val response =
+                    RetrofitInstance.apiService.addOrDeleteFavourites(
+                        token = token,
+                        addOrDeleteFavouriteRequest = addOrDeleteFavouriteRequest
+                    )
+                if (response.isSuccessful) {
+                    onSuccess(response.body()?.message)
+                }
+            } catch (Exception: Exception) {
+                println(Exception)
+            }
+
         }
     }
 

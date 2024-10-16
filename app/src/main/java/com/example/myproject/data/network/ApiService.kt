@@ -52,7 +52,7 @@ interface ApiService {
     @POST("favorites")
     suspend fun addOrDeleteFavourites(
         @Header("Authorization") token: String,
-        @Header("lang") lang: String,
+        @Header("lang") lang:String = "en",
         @Body addOrDeleteFavouriteRequest: AddOrDeleteFavouriteRequest,
     ): Response<AddOrDeleteResponse>
 
