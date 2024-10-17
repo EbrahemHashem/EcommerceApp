@@ -38,8 +38,11 @@ class MainScreen(val token: String) : Screen {
                     // Show content based on selected item
                     when (selectedItem) {
                         0 -> HomeContent(token, navigator)
+//                        favourite screen
                         1 -> FavouriteContent(token, navigator)
+//                        cart screen
                         2 -> FavouriteContent(token, navigator)
+//                        profile screen
                         3 -> FavouriteContent(token, navigator)
                     }
                 }
