@@ -5,18 +5,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -53,6 +42,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
@@ -73,7 +63,7 @@ class HomeScreen(val token: String) : Screen {
 
 @Composable
 fun HomeContent(token: String, navigator: Navigator) {
-    val viewModel = remember { MainViewModel() }
+    val viewModel: MainViewModel = viewModel()
     val homeData = viewModel.homeResponse.collectAsState()
     val isLoading = viewModel.isLoading.collectAsState()
     val search = remember { mutableStateOf("") }
@@ -81,183 +71,179 @@ fun HomeContent(token: String, navigator: Navigator) {
     val context = LocalContext.current
 
 
-    LaunchedEffect(Unit) {
-        viewModel.getHomeData(token = token, lang = "en")
-        viewModel.getCategory(token = token, lang = "en")
+    LaunchedEffect(viewModel) {
+        if (homeData.value == null) {
+            viewModel.getHomeData(token = token, lang = "en")
+            viewModel.getCategory(token = token, lang = "en")
+        }
     }
 
     if (isLoading.value) {
         AnimatedShimmer()
     } else {
+        Scaffold(
+            content = {
 
-// فوق
-        if (isLoading.value) {
-            AnimatedShimmer()
-        } else {
-            Scaffold(
-                content = {
+                Column(
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color(0xFFF3F3F3))
+                        .padding(it)
+                ) {
+                    Spacer(modifier = Modifier.height(15.dp))
 
-                    Column(
-                        verticalArrangement = Arrangement.Top,
-                        horizontalAlignment = Alignment.CenterHorizontally,
+                    OutlinedTextField(
+                        value = search.value,
+                        onValueChange = {
+                            search.value = it
+                            if (it.isNotEmpty()) {
+                                viewModel.getSearchData(token, lang = "en", it)
+                            } else {
+                                viewModel.clearSearchData() // Clear results if input is empty
+                            }
+                        },
+                        textStyle = TextStyle(
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Normal,
+                            color = Color.Black
+                        ),
                         modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color(0xFFF3F3F3))
-                            .padding(it)
-                    ) {
-
-                        Spacer(modifier = Modifier.height(15.dp))
-
-                        OutlinedTextField(
-                            value = search.value,
-                            onValueChange = {
-                                search.value = it
-                                if (it.isNotEmpty()) {
-                                    viewModel.getSearchData(token, lang = "en", it)
-                                } else {
-                                    viewModel.clearSearchData() // Clear results if input is empty
-                                }
-                            },
-                            textStyle = TextStyle(
+                            .fillMaxWidth(0.9f),
+                        placeholder = {
+                            Text(
+                                text = "Search",
                                 fontSize = 18.sp,
-                                fontWeight = FontWeight.Normal,
-                                color = Color.Black
-                            ),
-                            modifier = Modifier
-                                .fillMaxWidth(0.9f),
-                            placeholder = {
-                                Text(
-                                    text = "Search",
-                                    fontSize = 18.sp,
-                                )
-                            },
-                            trailingIcon = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.search),
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .size(28.dp),
-                                    tint = Color.Gray
-                                )
-                            },
-                            maxLines = 1,
-                            singleLine = true,
-                            shape = RoundedCornerShape(15.dp),
-                        )
+                            )
+                        },
+                        trailingIcon = {
+                            Icon(
+                                painter = painterResource(id = R.drawable.search),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(28.dp),
+                                tint = Color.Gray
+                            )
+                        },
+                        maxLines = 1,
+                        singleLine = true,
+                        shape = RoundedCornerShape(15.dp),
+                    )
 
-                        val products = if (search.value.isNotEmpty()) {
-                            searchData.value?.data?.data ?: emptyList()
-                        } else {
-                            homeData.value?.data?.products ?: emptyList()
-                        }
+                    val products = if (search.value.isNotEmpty()) {
+                        searchData.value?.data?.data ?: emptyList()
+                    } else {
+                        homeData.value?.data?.products ?: emptyList()
+                    }
 
-                        LazyVerticalGrid(
-                            columns = GridCells.Fixed(2),
-                            contentPadding = PaddingValues(8.dp),
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            items(products) { product ->
-                                Card(
-                                    modifier = Modifier
-                                        .padding(8.dp)
-                                        .fillMaxWidth(),
-                                    elevation = CardDefaults.cardElevation(8.dp),
-                                    shape = RoundedCornerShape(12.dp) // Rounded corners for a softer look
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        contentPadding = PaddingValues(8.dp),
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        items(products) { product ->
+                            Card(
+                                modifier = Modifier
+                                    .padding(8.dp)
+                                    .fillMaxWidth(),
+                                elevation = CardDefaults.cardElevation(8.dp),
+                                shape = RoundedCornerShape(12.dp) // Rounded corners for a softer look
+                            ) {
+                                var isFavourite by remember { mutableStateOf(product.in_favorites) }
+                                Box(
+                                    modifier = Modifier.fillMaxSize() // Use Box to allow for overlay of elements
                                 ) {
-                                    var isFavourite by remember { mutableStateOf(product.in_favorites) }
-                                    Box(
-                                        modifier = Modifier.fillMaxSize() // Use Box to allow for overlay of elements
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.Center,
+                                        modifier = Modifier.background(Color(0xFFF3F3F3))
                                     ) {
-                                        Column(
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            verticalArrangement = Arrangement.Center,
-                                            modifier = Modifier.background(Color(0xFFF3F3F3))
-                                        ) {
-                                            AsyncImage(
-                                                model = product.image,
-                                                contentDescription = null,
-                                                contentScale = ContentScale.FillBounds,
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .height(120.dp)
-                                                    .clip(RoundedCornerShape(12.dp))
-                                                    .clickable {
-//                                                        navigate to details screen
-                                                        navigator.push(DetailsScreen(product))
-                                                    }
-                                            )
-
-                                            Spacer(modifier = Modifier.height(8.dp))
-
-                                            Text(
-                                                text = product.name,
-                                                modifier = Modifier.padding(
-                                                    start = 8.dp, end = 8.dp
-                                                ),
-                                                fontSize = 16.sp,
-                                                fontWeight = FontWeight.SemiBold,
-                                                color = Color.DarkGray,
-                                                maxLines = 1,
-                                            )
-                                            Row(
-                                                verticalAlignment = Alignment.CenterVertically,
-                                                horizontalArrangement = Arrangement.SpaceAround,
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                            ) {
-                                                Text(
-                                                    text = "$${product.price}",
-                                                    fontSize = 18.sp,
-                                                    fontWeight = FontWeight.SemiBold,
-                                                    color = Color.Black,
-                                                )
-
-                                                Spacer(modifier = Modifier.width(5.dp))
-
-                                                IconButton(onClick = { /*TODO*/ }) {
-                                                    Icon(
-                                                        imageVector = Icons.Default.Add,
-                                                        contentDescription = null
-                                                    )
-                                                }
-                                            }
-
-                                        }
-
-                                        Box(
+                                        AsyncImage(
+                                            model = product.image,
+                                            contentDescription = null,
+                                            contentScale = ContentScale.FillBounds,
                                             modifier = Modifier
-                                                .align(Alignment.TopEnd)
-                                                .padding(8.dp)
+                                                .fillMaxWidth()
+                                                .height(120.dp)
+                                                .clip(RoundedCornerShape(12.dp))
                                                 .clickable {
-                                                    isFavourite = !isFavourite
-                                                    viewModel.getAddFvourites(
-                                                        token = token,
-                                                        addOrDeleteFavouriteRequest = AddOrDeleteFavouriteRequest(
-                                                            productId = product.id
-                                                        ),
-                                                        onSuccess = {
-                                                            Toast
-                                                                .makeText(
-                                                                    context,
-                                                                    "$it",
-                                                                    Toast.LENGTH_LONG
-                                                                )
-                                                                .show()
-
-                                                        })
-
+//                                                        navigate to details screen
+                                                    navigator.push(DetailsScreen(product))
                                                 }
+                                        )
+
+                                        Spacer(modifier = Modifier.height(8.dp))
+
+                                        Text(
+                                            text = product.name,
+                                            modifier = Modifier.padding(
+                                                start = 8.dp, end = 8.dp
+                                            ),
+                                            fontSize = 16.sp,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = Color.DarkGray,
+                                            maxLines = 1,
+                                        )
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.SpaceAround,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
                                         ) {
-                                            FavouriteButton(isFavourite = isFavourite)
+                                            Text(
+                                                text = "$${product.price}",
+                                                fontSize = 18.sp,
+                                                fontWeight = FontWeight.SemiBold,
+                                                color = Color.Black,
+                                            )
+
+                                            Spacer(modifier = Modifier.width(5.dp))
+
+                                            IconButton(onClick = { /*TODO*/ }) {
+                                                Icon(
+                                                    imageVector = Icons.Default.Add,
+                                                    contentDescription = null
+                                                )
+                                            }
                                         }
+
+                                    }
+
+                                    Box(
+                                        modifier = Modifier
+                                            .align(Alignment.TopEnd)
+                                            .padding(8.dp)
+                                            .clickable {
+                                                isFavourite = !isFavourite
+//                                                    favourite toast
+                                                viewModel.getAddFvourites(
+                                                    token = token,
+                                                    addOrDeleteFavouriteRequest = AddOrDeleteFavouriteRequest(
+                                                        productId = product.id
+                                                    ),
+                                                    onSuccess = {
+                                                        Toast
+                                                            .makeText(
+                                                                context,
+                                                                "$it",
+                                                                Toast.LENGTH_LONG
+                                                            )
+                                                            .show()
+
+                                                    })
+
+                                            }
+                                    ) {
+                                        FavouriteButton(isFavourite = isFavourite)
                                     }
                                 }
                             }
                         }
                     }
                 }
-            )
-        }//else
-    }
+            }
+        )
+    }//else
 }
 
