@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun CustomBottomNavigationBar(
     selectedItem: Int,
-//    onItemSelected: @Composable (Int) -> Unit
+    onItemSelected: (Int) -> Unit
 ) {
     val selectedItemState = remember { mutableStateOf(selectedItem) }
 
@@ -41,7 +41,9 @@ fun CustomBottomNavigationBar(
         ) {
 //home icon
         IconButton(
-            onClick = { selectedItemState.value = 0 },
+            onClick = { selectedItemState.value = 0
+                onItemSelected(0)
+            },
             modifier = Modifier.weight(1f)
         ) {
             Icon(
@@ -55,6 +57,7 @@ fun CustomBottomNavigationBar(
         IconButton(
             onClick = {
                 selectedItemState.value = 1
+                onItemSelected(1)
             },
             modifier = Modifier.weight(1f)
         ) {
@@ -67,7 +70,9 @@ fun CustomBottomNavigationBar(
         }
 //        cart icon
         IconButton(
-            onClick = { selectedItemState.value = 2 },
+            onClick = { selectedItemState.value = 2
+                onItemSelected(2)
+            },
             modifier = Modifier.weight(1f)
         ) {
             Icon(
@@ -79,7 +84,9 @@ fun CustomBottomNavigationBar(
         }
 //        profile icon
         IconButton(
-            onClick = { selectedItemState.value = 3 },
+            onClick = { selectedItemState.value = 3
+                onItemSelected(3)
+            },
             modifier = Modifier.weight(1f)
         ) {
             Icon(

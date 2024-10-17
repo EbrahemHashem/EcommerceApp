@@ -118,7 +118,7 @@ class LoginScreen : Screen {
                             password = password.value,
                         ),
                         onSuccess = {
-                            navigator.push(HomeScreen(it))
+                            navigator.push(MainScreen(it))
                         }
                     )
                 }) {

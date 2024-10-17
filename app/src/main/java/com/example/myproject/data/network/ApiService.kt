@@ -9,6 +9,7 @@ import com.example.myproject.data.model.RegisterResponse
 import com.example.myproject.data.model.favourite.AddOrDeleteFavouriteRequest
 import com.example.myproject.data.model.favourite.AddOrDeleteResponse
 import com.example.myproject.data.model.favourite.FavouritesResponse
+import com.example.myproject.data.model.search.SearchResponse
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
@@ -18,6 +19,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface ApiService {
 
@@ -55,6 +57,16 @@ interface ApiService {
         @Header("lang") lang:String = "en",
         @Body addOrDeleteFavouriteRequest: AddOrDeleteFavouriteRequest,
     ): Response<AddOrDeleteResponse>
+
+    @POST("products/search")
+    suspend fun searchProducts(
+        @Header("Authorization")
+        token: String,
+        @Header("lang") lang: String,
+        @Body body: Map<String, String>
+    ): Response<SearchResponse>
+
+
 
 }
 

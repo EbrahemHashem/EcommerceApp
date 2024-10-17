@@ -10,6 +10,7 @@ import com.example.myproject.data.model.RegisterRequest
 import com.example.myproject.data.model.RegisterResponse
 import com.example.myproject.data.model.favourite.AddOrDeleteFavouriteRequest
 import com.example.myproject.data.model.favourite.FavouritesResponse
+import com.example.myproject.data.model.search.SearchResponse
 import com.example.myproject.data.network.RetrofitInstance
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -139,6 +140,40 @@ class MainViewModel : ViewModel() {
             }
 
         }
+    }
+
+    private val _searchResponse = MutableStateFlow<SearchResponse?>(null)
+    val searchResponse: StateFlow<SearchResponse?> = _searchResponse
+
+    fun getSearchData(token: String, lang: String, query: String) {
+        viewModelScope.launch {
+            _searchResponse.value = null
+            try {
+                val response = RetrofitInstance.apiService.searchProducts(
+                    token,
+                    lang,
+                    mapOf("search" to query)
+                )
+                if (response.isSuccessful) {
+                    _searchResponse.value = response.body()
+                } else {
+                    println("Error: ${response.code()} - ${response.message()}")
+                }
+            } catch (e: Exception) {
+                println("Exception: ${e.localizedMessage}")
+            }
+        }
+    }
+
+    fun clearSearchData() {
+        _searchResponse.value = null
+    }
+
+    private val _selectedItem = MutableStateFlow(0)
+    val selectedItem: StateFlow<Int> = _selectedItem
+
+    fun selectItem(index: Int) {
+        _selectedItem.value = index
     }
 
 
