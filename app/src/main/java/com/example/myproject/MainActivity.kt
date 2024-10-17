@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import cafe.adriel.voyager.navigator.Navigator
 import com.example.myproject.presentaion.screens.LoginScreen
 import com.example.myproject.presentaion.screens.RegisterScreen
+import com.example.myproject.presentaion.screens.SplashScreen
 import com.example.myproject.ui.theme.MyProjectTheme
 
 class MainActivity : ComponentActivity() {
@@ -21,7 +22,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            Navigator(screen = LoginScreen())
+            Navigator(screen = SplashScreen())
         }
     }
 }
