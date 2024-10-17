@@ -51,6 +51,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
@@ -71,23 +72,25 @@ class HomeScreen(val token: String) : Screen {
 
     @Composable
     fun HomeContent(token: String, navigator: Navigator) {
-        val viewModel = remember { MainViewModel() }
+        val viewModel: MainViewModel = viewModel()
         val homeData = viewModel.homeResponse.collectAsState()
         val isLoading = viewModel.isLoading.collectAsState()
         val search = remember { mutableStateOf("") }
         val searchData = viewModel.searchResponse.collectAsState()
 
 
-        LaunchedEffect(Unit) {
-            viewModel.getHomeData(token = token, lang = "en")
-            viewModel.getCategory(token = token, lang = "en")
+        LaunchedEffect(viewModel) {
+
+            if (homeData.value == null) { // Fetch data only if not already loaded
+                viewModel.getHomeData(token = token, lang = "en")
+                viewModel.getCategory(token = token, lang = "en")
+            }
         }
 
         if (isLoading.value) {
             AnimatedShimmer()
         } else {
 
-// فوق
             if (isLoading.value) {
                 AnimatedShimmer()
             } else {
