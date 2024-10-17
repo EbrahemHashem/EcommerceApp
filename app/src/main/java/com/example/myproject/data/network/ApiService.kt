@@ -9,6 +9,7 @@ import com.example.myproject.data.model.RegisterResponse
 import com.example.myproject.data.model.favourite.AddOrDeleteFavouriteRequest
 import com.example.myproject.data.model.favourite.AddOrDeleteResponse
 import com.example.myproject.data.model.favourite.FavouritesResponse
+import com.example.myproject.data.model.search.SearchRequest
 import com.example.myproject.data.model.search.SearchResponse
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -63,7 +64,7 @@ interface ApiService {
         @Header("Authorization")
         token: String,
         @Header("lang") lang: String,
-        @Body body: Map<String, String>
+        @Body body:SearchRequest
     ): Response<SearchResponse>
 
 

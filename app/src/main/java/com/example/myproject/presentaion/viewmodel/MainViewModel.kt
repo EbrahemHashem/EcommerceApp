@@ -10,6 +10,7 @@ import com.example.myproject.data.model.RegisterRequest
 import com.example.myproject.data.model.RegisterResponse
 import com.example.myproject.data.model.favourite.AddOrDeleteFavouriteRequest
 import com.example.myproject.data.model.favourite.FavouritesResponse
+import com.example.myproject.data.model.search.SearchRequest
 import com.example.myproject.data.model.search.SearchResponse
 import com.example.myproject.data.network.RetrofitInstance
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -152,7 +153,7 @@ class MainViewModel : ViewModel() {
                 val response = RetrofitInstance.apiService.searchProducts(
                     token,
                     lang,
-                    mapOf("search" to query)
+                    SearchRequest(query)
                 )
                 if (response.isSuccessful) {
                     _searchResponse.value = response.body()

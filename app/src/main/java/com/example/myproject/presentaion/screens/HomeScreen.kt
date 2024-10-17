@@ -53,14 +53,6 @@ import com.example.myproject.R
 import com.example.myproject.data.model.favourite.AddOrDeleteFavouriteRequest
 import com.example.myproject.util.FavouriteButton
 
-class HomeScreen(val token: String) : Screen {
-    @Composable
-    override fun Content() {
-        HomeContent(token, LocalNavigator.currentOrThrow)
-    }
-}
-
-
 @Composable
 fun HomeContent(token: String, navigator: Navigator) {
     val viewModel: MainViewModel = viewModel()
@@ -92,7 +84,6 @@ fun HomeContent(token: String, navigator: Navigator) {
                         .background(Color(0xFFF3F3F3))
                         .padding(it)
                 ) {
-                    Spacer(modifier = Modifier.height(15.dp))
 
                     OutlinedTextField(
                         value = search.value,
