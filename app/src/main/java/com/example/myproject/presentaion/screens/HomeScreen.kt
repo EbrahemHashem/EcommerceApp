@@ -5,18 +5,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -85,6 +74,22 @@ fun HomeContent(token: String, navigator: Navigator) {
         viewModel.getHomeData(token = token, lang = "en")
         viewModel.getCategory(token = token, lang = "en")
     }
+    @Composable
+    fun HomeContent(token: String, navigator: Navigator) {
+        val viewModel: MainViewModel = viewModel()
+        val homeData = viewModel.homeResponse.collectAsState()
+        val isLoading = viewModel.isLoading.collectAsState()
+        val search = remember { mutableStateOf("") }
+        val searchData = viewModel.searchResponse.collectAsState()
+
+
+        LaunchedEffect(viewModel) {
+
+            if (homeData.value == null) { // Fetch data only if not already loaded
+                viewModel.getHomeData(token = token, lang = "en")
+                viewModel.getCategory(token = token, lang = "en")
+            }
+        }
 
     if (isLoading.value) {
         AnimatedShimmer()
@@ -105,7 +110,11 @@ fun HomeContent(token: String, navigator: Navigator) {
                             .background(Color(0xFFF3F3F3))
                             .padding(it)
                     ) {
-
+            if (isLoading.value) {
+                AnimatedShimmer()
+            } else {
+                Scaffold(
+                    content = {
                         Spacer(modifier = Modifier.height(15.dp))
 
                         OutlinedTextField(
@@ -230,6 +239,7 @@ fun HomeContent(token: String, navigator: Navigator) {
                                                 .padding(8.dp)
                                                 .clickable {
                                                     isFavourite = !isFavourite
+//                                                    favourite toast
                                                     viewModel.getAddFvourites(
                                                         token = token,
                                                         addOrDeleteFavouriteRequest = AddOrDeleteFavouriteRequest(
