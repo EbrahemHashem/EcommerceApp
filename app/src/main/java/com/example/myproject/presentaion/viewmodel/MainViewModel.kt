@@ -8,6 +8,8 @@ import com.example.myproject.data.model.LoginRequest
 import com.example.myproject.data.model.LoginResponse
 import com.example.myproject.data.model.RegisterRequest
 import com.example.myproject.data.model.RegisterResponse
+import com.example.myproject.data.model.cart.AddOrDeleteCartRequest
+import com.example.myproject.data.model.cart.CartResponse
 import com.example.myproject.data.model.favourite.AddOrDeleteFavouriteRequest
 import com.example.myproject.data.model.favourite.FavouritesResponse
 import com.example.myproject.data.model.search.SearchRequest
@@ -142,7 +144,50 @@ class MainViewModel : ViewModel() {
 
         }
     }
+//    Cart
+//    ///////////////////////////////////
 
+    private val _cartResponse = MutableStateFlow<CartResponse?>(null)
+    val cartResponse: StateFlow<CartResponse?> get() = _cartResponse
+    fun getCartData(token: String, lang: String) {
+        viewModelScope.launch {
+            try {
+                val response =
+                    RetrofitInstance.apiService.getCartProducts(token, lang)
+                if (response.isSuccessful) {
+                    _cartResponse.value = response.body()
+                }
+            } catch (Exception: Exception) {
+                println(Exception)
+            }
+        }
+    }
+
+    ////////////////////////////////////
+    fun getAddCart(
+        token: String,
+        addOrDeleteCartRequest: AddOrDeleteCartRequest,
+        onSuccess: (String?) -> Unit,
+    ) {
+        viewModelScope.launch {
+            try {
+                val response =
+                    RetrofitInstance.apiService.addOrDeleteCart(
+                        token = token,
+                        addOrDeleteCartRequest = addOrDeleteCartRequest
+                    )
+                if (response.isSuccessful) {
+                    onSuccess(response.body()?.message)
+                }
+            } catch (Exception: Exception) {
+                println(Exception)
+            }
+
+        }
+    }
+
+
+    //search
     private val _searchResponse = MutableStateFlow<SearchResponse?>(null)
     val searchResponse: StateFlow<SearchResponse?> = _searchResponse
 

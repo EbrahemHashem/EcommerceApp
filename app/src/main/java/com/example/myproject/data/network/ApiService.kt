@@ -6,6 +6,9 @@ import com.example.myproject.data.model.LoginRequest
 import com.example.myproject.data.model.LoginResponse
 import com.example.myproject.data.model.RegisterRequest
 import com.example.myproject.data.model.RegisterResponse
+import com.example.myproject.data.model.cart.AddOrDeleteCartRequest
+import com.example.myproject.data.model.cart.AddorDeleteCartResponse
+import com.example.myproject.data.model.cart.CartResponse
 import com.example.myproject.data.model.favourite.AddOrDeleteFavouriteRequest
 import com.example.myproject.data.model.favourite.AddOrDeleteResponse
 import com.example.myproject.data.model.favourite.FavouritesResponse
@@ -55,18 +58,34 @@ interface ApiService {
     @POST("favorites")
     suspend fun addOrDeleteFavourites(
         @Header("Authorization") token: String,
-        @Header("lang") lang:String = "en",
+        @Header("lang") lang: String = "en",
         @Body addOrDeleteFavouriteRequest: AddOrDeleteFavouriteRequest,
     ): Response<AddOrDeleteResponse>
 
+    //    get cart products
+    @GET("carts")
+    suspend fun getCartProducts(
+        @Header("Authorization") token: String,
+        @Header("lang") lang: String,
+    ): Response<CartResponse>
+
+    //    add or delete cart
+    @POST("carts")
+    suspend fun addOrDeleteCart(
+        @Header("Authorization") token: String,
+        @Header("lang") lang: String = "en",
+        @Body addOrDeleteCartRequest: AddOrDeleteCartRequest,
+
+        ): Response<AddorDeleteCartResponse>
+
+    //search
     @POST("products/search")
     suspend fun searchProducts(
         @Header("Authorization")
         token: String,
         @Header("lang") lang: String,
-        @Body body:SearchRequest
+        @Body body: SearchRequest,
     ): Response<SearchResponse>
-
 
 
 }

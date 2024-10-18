@@ -41,7 +41,7 @@ class MainScreen(val token: String) : Screen {
 //                        favourite screen
                         1 -> FavouriteContent(token, viewModel)
 //                        cart screen
-                        2 -> FavouriteContent(token, viewModel)
+                        2 -> CartContent()
 //                        profile screen
                         3 -> FavouriteContent(token, viewModel)
                     }
