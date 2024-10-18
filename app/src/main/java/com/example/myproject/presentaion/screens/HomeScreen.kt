@@ -50,6 +50,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
 import com.example.myproject.presentaion.viewmodel.MainViewModel
 import com.example.myproject.R
+import com.example.myproject.data.model.cart.AddOrDeleteCartRequest
 import com.example.myproject.data.model.favourite.AddOrDeleteFavouriteRequest
 import com.example.myproject.util.FavouriteButton
 
@@ -191,7 +192,24 @@ fun HomeContent(token: String, navigator: Navigator) {
 
                                             Spacer(modifier = Modifier.width(5.dp))
 
-                                            IconButton(onClick = { /*TODO*/ }) {
+                                            IconButton(onClick = {
+                                                //  cart toast
+                                                viewModel.getAddCart(
+                                                    token = token,
+                                                    addOrDeleteCartRequest = AddOrDeleteCartRequest (
+                                                        productId = product.id
+                                                    ),
+                                                    onSuccess = {
+                                                        Toast
+                                                            .makeText(
+                                                                context,
+                                                                "$it",
+                                                                Toast.LENGTH_SHORT
+                                                            )
+                                                            .show()
+
+                                                    })
+                                            }) {
                                                 Icon(
                                                     imageVector = Icons.Default.Add,
                                                     contentDescription = null
@@ -218,7 +236,7 @@ fun HomeContent(token: String, navigator: Navigator) {
                                                             .makeText(
                                                                 context,
                                                                 "$it",
-                                                                Toast.LENGTH_LONG
+                                                                Toast.LENGTH_SHORT
                                                             )
                                                             .show()
 

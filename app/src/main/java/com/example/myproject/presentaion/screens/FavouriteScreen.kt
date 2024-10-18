@@ -60,7 +60,7 @@ fun FavouriteContent(token: String, viewModel: MainViewModel) {
             verticalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(8.dp)
         ) {
-            items(favourites.value?.data?.data ?: emptyList()) {
+            items(favourites.value?.data?.data?: emptyList()) {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
