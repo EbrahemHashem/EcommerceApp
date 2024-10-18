@@ -41,7 +41,7 @@ import com.example.myproject.util.CustomBottomNavigationBar
 @Composable
 fun FavouriteContent(token: String, viewModel: MainViewModel) {
     val screenWidth = LocalConfiguration.current.screenWidthDp
-    viewModel.getFavourites(token = token)
+    viewModel.getFavourites(token = token, lang = "en")
     val favourites = viewModel.favouriteResponse.collectAsState()
     Column(
         modifier = Modifier,
