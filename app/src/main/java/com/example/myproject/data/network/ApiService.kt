@@ -47,7 +47,7 @@ interface ApiService {
     @GET("favorites")
     suspend fun getFavouritesData(
         @Header("Authorization") token: String,
-        @Header("lang") lang: String,
+        @Header("lang") lang :String ="en",
     ): Response<FavouritesResponse>
 
     //    add or delete favourites

@@ -240,7 +240,7 @@ fun HomeContent(token: String, navigator: Navigator) {
                                                                 .makeText(
                                                                     context,
                                                                     "$it",
-                                                                    Toast.LENGTH_LONG
+                                                                    Toast.LENGTH_SHORT
                                                                 )
                                                                 .show()
 

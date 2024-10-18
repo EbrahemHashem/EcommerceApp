@@ -39,11 +39,11 @@ class MainScreen(val token: String) : Screen {
                     when (selectedItem) {
                         0 -> HomeContent(token, navigator)
 //                        favourite screen
-                        1 -> FavouriteContent(token, navigator)
+                        1 -> FavouriteContent(token, viewModel)
 //                        cart screen
-                        2 -> FavouriteContent(token, navigator)
+                        2 -> FavouriteContent(token, viewModel)
 //                        profile screen
-                        3 -> FavouriteContent(token, navigator)
+                        3 -> FavouriteContent(token, viewModel)
                     }
                 }
             }

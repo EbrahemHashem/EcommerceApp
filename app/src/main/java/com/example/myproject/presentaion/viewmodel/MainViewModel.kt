@@ -106,11 +106,11 @@ class MainViewModel : ViewModel() {
     //    favourites
     private val _favouriteResponse = MutableStateFlow<FavouritesResponse?>(null)
     val favouriteResponse: StateFlow<FavouritesResponse?> get() = _favouriteResponse
-    fun getFavourites(token: String, lang: String) {
+    fun getFavourites(token: String) {
         viewModelScope.launch {
             try {
                 val response =
-                    RetrofitInstance.apiService.getFavouritesData(token, lang)
+                    RetrofitInstance.apiService.getFavouritesData(token)
                 if (response.isSuccessful) {
                     _favouriteResponse.value = response.body()
                 }
