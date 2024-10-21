@@ -52,6 +52,8 @@ class LoginScreen : Screen {
             mutableStateOf("")
         }
         var passwordVisible by remember { mutableStateOf(false) }
+        var emailError by remember { mutableStateOf("") }
+        var passwordError by remember { mutableStateOf("") }
 
 
         Column(
@@ -76,13 +78,18 @@ class LoginScreen : Screen {
             )
             Spacer(modifier = Modifier.height(10.dp))
 
-            CustomOutlinedTextField(email.value, onValueChange = { email.value = it }, "Email")
+            CustomOutlinedTextField(email.value, onValueChange = { email.value = it
+                emailError = ""}, label = "Email",)
+            if (emailError.isNotEmpty()) {
+                Text(text = emailError, color = Color.Red, fontSize = 12.sp)
+            }
 
             Spacer(modifier = Modifier.height(10.dp))
 
             OutlinedTextField(
                 value = password.value,
-                onValueChange = { password.value = it },
+                onValueChange = { password.value = it
+                    passwordError = ""},
                 label = { Text("Password", fontSize = 16.sp) },
                 trailingIcon = {
                     IconButton(
@@ -105,13 +112,20 @@ class LoginScreen : Screen {
                     color = Color.Black
                 ) // Change the text style
             )
+            if (passwordError.isNotEmpty()) {
+                Text(text = passwordError, color = Color.Red, fontSize = 12.sp)
+            }
 
             Button(
                 modifier = Modifier
                     .padding(top = 10.dp)
                     .width(250.dp)
                     .height(50.dp),
-                onClick = {
+                onClick = {if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email.value).matches()) {
+                    emailError = "Please enter a valid email address"
+                } else if (password.value.isEmpty()) {
+                    passwordError = "Password cannot be empty"
+                } else {
                     viewModel.login(
                         LoginRequest(
                             email = email.value,
@@ -121,7 +135,7 @@ class LoginScreen : Screen {
                             navigator.push(MainScreen(it))
                         }
                     )
-                }) {
+                }}) {
                 Text(
                     text = "Login"
                 )

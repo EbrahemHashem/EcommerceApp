@@ -50,6 +50,11 @@ class RegisterScreen : Screen {
         val name = remember { mutableStateOf("") }
         var passwordVisible by remember { mutableStateOf(false) }
 
+        var emailError by remember { mutableStateOf("") }
+        var passwordError by remember { mutableStateOf("") }
+        var phoneError by remember { mutableStateOf("") }
+        var nameError by remember { mutableStateOf("") }
+
 
         Column(
             verticalArrangement = Arrangement.Center,
@@ -72,12 +77,18 @@ class RegisterScreen : Screen {
             )
             Spacer(modifier = Modifier.height(5.dp))
 
-            CustomOutlinedTextField(email.value, onValueChange = { email.value = it }, "Email")
+            CustomOutlinedTextField(email.value, onValueChange = { email.value = it
+                emailError = ""}, label = "Email")
+
+            if (emailError.isNotEmpty()) {
+                Text(text = emailError, color = Color.Red, fontSize = 12.sp)
+            }
 
             Spacer(modifier = Modifier.height(5.dp))
             OutlinedTextField(
                 value = password.value,
-                onValueChange = { password.value = it },
+                onValueChange = { password.value = it
+                    passwordError = ""},
                 label = { Text("Password", fontSize = 16.sp) },
                 trailingIcon = {
                     IconButton(
@@ -100,12 +111,27 @@ class RegisterScreen : Screen {
                 ) // Change the text style
 
             )
+
+            if (passwordError.isNotEmpty()) {
+                Text(text = passwordError, color = Color.Red, fontSize = 12.sp)
+            }
             Spacer(modifier = Modifier.height(5.dp))
-            CustomOutlinedTextField(phone.value, onValueChange = { phone.value = it }, "Phone")
+
+            CustomOutlinedTextField(phone.value, onValueChange = { phone.value = it
+                phoneError = ""}, "Phone")
+
+            if (phoneError.isNotEmpty()) {
+                Text(text = phoneError, color = Color.Red, fontSize = 12.sp)
+            }
 
             Spacer(modifier = Modifier.height(5.dp))
 
-            CustomOutlinedTextField(name.value, onValueChange = { name.value = it }, "Name")
+            CustomOutlinedTextField(name.value, onValueChange = { name.value = it
+                nameError = ""}, "Name")
+
+            if (nameError.isNotEmpty()) {
+                Text(text = nameError, color = Color.Red, fontSize = 12.sp)
+            }
 
             Button(
                 modifier = Modifier
@@ -113,15 +139,26 @@ class RegisterScreen : Screen {
                     .width(250.dp)
                     .height(50.dp),
                 onClick = {
-                    viewModel.register(
-                        RegisterRequest(
-                            email = email.value,
-                            password = password.value,
-                            phone = phone.value,
-                            name = name.value
+                    // Validation
+                    if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email.value).matches()) {
+                        emailError = "Please enter a valid email address"
+                    } else if (password.value.length < 6) {
+                        passwordError = "Password must be at least 6 characters"
+                    } else if (!phone.value.matches(Regex("^\\+?\\d{10,13}\$"))) {
+                        phoneError = "Please enter a valid phone number"
+                    } else if (name.value.isEmpty()) {
+                        nameError = "Name cannot be empty"
+                    } else {
+                        // Proceed with registration if validation passes
+                        viewModel.register(
+                            RegisterRequest(
+                                email = email.value,
+                                password = password.value,
+                                phone = phone.value,
+                                name = name.value
+                            )
                         )
-                    )
-                }) {
+                    }}) {
                 Text(
                     text = "SignUp"
                 )
