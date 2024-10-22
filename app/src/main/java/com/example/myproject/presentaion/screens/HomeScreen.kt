@@ -67,7 +67,6 @@ fun HomeContent(token: String, navigator: Navigator) {
     LaunchedEffect(viewModel) {
         if (homeData.value == null) {
             viewModel.getHomeData(token = token, lang = "en")
-            viewModel.getCategory(token = token, lang = "en")
         }
     }
 
@@ -161,7 +160,7 @@ fun HomeContent(token: String, navigator: Navigator) {
                                                 .clip(RoundedCornerShape(12.dp))
                                                 .clickable {
 //                                                        navigate to details screen
-                                                    navigator.push(DetailsScreen(product))
+                                                    navigator.push(DetailsScreen(product,token))
                                                 }
                                         )
 

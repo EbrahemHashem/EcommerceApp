@@ -69,20 +69,18 @@ import java.util.Spliterator
 import java.util.function.Predicate.not
 
 
-class DetailsScreen(val product: Product) : Screen {
-
-
+class DetailsScreen(val product: Product,val token: String) : Screen {
 
 
     @Composable
     override fun Content() {
-        Details(product,viewModel())
+        Details(product,viewModel(),token)
     }
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun Details(product: Product,viewModel: MainViewModel) {
+fun Details(product: Product,viewModel: MainViewModel,token: String) {
     val context = LocalContext.current
     val navigator = LocalNavigator.currentOrThrow
 
@@ -181,7 +179,7 @@ fun Details(product: Product,viewModel: MainViewModel) {
                 onClick = {
 //                    add to cart
                     viewModel.getAddCart(
-                        token = viewModel.loginResponse.value?.data?.token?:"",
+                        token =token,
                         addOrDeleteCartRequest = AddOrDeleteCartRequest (
                             productId = product.id
                         ),
