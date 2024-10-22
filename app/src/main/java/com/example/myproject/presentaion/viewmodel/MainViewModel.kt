@@ -25,16 +25,18 @@ class MainViewModel : ViewModel() {
     val loginResponse: StateFlow<LoginResponse?> get() = _loginResponse
 
     //    login
-    fun login(loginRequest: LoginRequest, onSuccess: (String) -> Unit) {
+    fun login(loginRequest: LoginRequest, onSuccess: (String) -> Unit,onError: (Boolean) -> Unit) {
         viewModelScope.launch {
             try {
                 val response =
                     RetrofitInstance.apiService.login(loginRequest)
-                if (response.isSuccessful) {
+                if (response.isSuccessful && response.body()?.status == true) {
                     _loginResponse.value = response.body()
                     onSuccess(response.body()?.data?.token ?: "")
+                } else {
+                    onError(response.body()?.status == false)
                 }
-            } catch (Exception: Exception) {
+                } catch (Exception: Exception) {
                 println(Exception)
             }
         }

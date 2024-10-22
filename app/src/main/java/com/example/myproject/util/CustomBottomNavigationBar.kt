@@ -82,20 +82,6 @@ fun CustomBottomNavigationBar(
                 tint = if (selectedItemState.value == 2) Color(0xFFFBC02D) else Color.Gray
             )
         }
-//        profile icon
-        IconButton(
-            onClick = { selectedItemState.value = 3
-                onItemSelected(3)
-            },
-            modifier = Modifier.weight(1f)
-        ) {
-            Icon(
-                modifier = Modifier.size(30.dp),
-                imageVector = Icons.Rounded.Person,
-                contentDescription = "Profile",
-                tint = if (selectedItemState.value == 3) Color(0xFFFBC02D) else Color.Gray
-            )
-        }
     }
 }
 

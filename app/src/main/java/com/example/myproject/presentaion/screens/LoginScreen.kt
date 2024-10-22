@@ -1,5 +1,6 @@
 package com.example.myproject.presentaion.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Info
@@ -31,9 +33,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -58,6 +62,8 @@ class LoginScreen : Screen {
         var passwordVisible by remember { mutableStateOf(false) }
         var emailError by remember { mutableStateOf("") }
         var passwordError by remember { mutableStateOf("") }
+        val context = LocalContext.current
+
 
         Column(
             verticalArrangement = Arrangement.Center,
@@ -123,6 +129,8 @@ class LoginScreen : Screen {
                     passwordError = ""
                 },
                 label = { Text("Password", fontSize = 16.sp) },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                 trailingIcon = {
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
                         Icon(
@@ -174,8 +182,13 @@ class LoginScreen : Screen {
                         viewModel.login(
                             LoginRequest(email = email.value, password = password.value),
                             onSuccess = {
+                                Toast.makeText(context, "Welcome Back", Toast.LENGTH_SHORT).show();
                                 navigator.push(MainScreen(it))
-                            }
+                            },
+                            onError = {
+                                Toast.makeText(context, "Wrong Email or Password",
+                                    Toast.LENGTH_SHORT).show()
+                               }
                         )
                     }
                 }
