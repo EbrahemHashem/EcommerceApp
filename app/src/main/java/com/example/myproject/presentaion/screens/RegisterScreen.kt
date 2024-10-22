@@ -3,11 +3,20 @@ package com.example.myproject.presentaion.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -50,6 +59,11 @@ class RegisterScreen : Screen {
         val name = remember { mutableStateOf("") }
         var passwordVisible by remember { mutableStateOf(false) }
 
+        var emailError by remember { mutableStateOf("") }
+        var passwordError by remember { mutableStateOf("") }
+        var phoneError by remember { mutableStateOf("") }
+        var nameError by remember { mutableStateOf("") }
+
 
         Column(
             verticalArrangement = Arrangement.Center,
@@ -72,12 +86,36 @@ class RegisterScreen : Screen {
             )
             Spacer(modifier = Modifier.height(5.dp))
 
-            CustomOutlinedTextField(email.value, onValueChange = { email.value = it }, "Email")
+            CustomOutlinedTextField(email.value, onValueChange = { email.value = it
+                emailError = ""}, label = "Email", leading = Icons.Default.Email)
+
+            if (emailError.isNotEmpty()) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(0.9f)
+                        .padding(top = 4.dp, start = 35.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = null,
+                        tint = Color.Red,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = emailError,
+                        color = Color.Red,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(5.dp))
             OutlinedTextField(
                 value = password.value,
-                onValueChange = { password.value = it },
+                onValueChange = { password.value = it
+                    passwordError = ""},
                 label = { Text("Password", fontSize = 16.sp) },
                 trailingIcon = {
                     IconButton(
@@ -92,6 +130,9 @@ class RegisterScreen : Screen {
                         )
                     }
                 },
+                leadingIcon = {
+                    Icon(imageVector = Icons.Default.Lock, contentDescription = null )
+                },
                 visualTransformation = if (passwordVisible)
                     VisualTransformation.None else PasswordVisualTransformation(),
                 textStyle = LocalTextStyle.current.copy(
@@ -100,12 +141,81 @@ class RegisterScreen : Screen {
                 ) // Change the text style
 
             )
+
+            if (passwordError.isNotEmpty()) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(0.9f)
+                        .padding(top = 4.dp, start = 35.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = null,
+                        tint = Color.Red,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = passwordError,
+                        color = Color.Red,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
             Spacer(modifier = Modifier.height(5.dp))
-            CustomOutlinedTextField(phone.value, onValueChange = { phone.value = it }, "Phone")
+
+            CustomOutlinedTextField(phone.value, onValueChange = { phone.value = it
+                phoneError = ""}, "Phone",leading = Icons.Default.Phone)
+
+            if (phoneError.isNotEmpty()) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(0.9f)
+                        .padding(top = 4.dp, start = 35.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = null,
+                        tint = Color.Red,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = phoneError,
+                        color = Color.Red,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(5.dp))
 
-            CustomOutlinedTextField(name.value, onValueChange = { name.value = it }, "Name")
+            CustomOutlinedTextField(name.value, onValueChange = { name.value = it
+                nameError = ""}, "Name", leading = Icons.Default.Person)
+
+            if (nameError.isNotEmpty()) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(0.9f)
+                        .padding(top = 4.dp, start = 35.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = null,
+                        tint = Color.Red,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = nameError,
+                        color = Color.Red,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
 
             Button(
                 modifier = Modifier
@@ -113,15 +223,27 @@ class RegisterScreen : Screen {
                     .width(250.dp)
                     .height(50.dp),
                 onClick = {
-                    viewModel.register(
-                        RegisterRequest(
-                            email = email.value,
-                            password = password.value,
-                            phone = phone.value,
-                            name = name.value
+                    // Validation
+                    if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email.value).matches()) {
+                        emailError = "Please enter a valid email address"
+                    } else if (password.value.length < 6) {
+                        passwordError = "Password must be at least 6 characters"
+                    } else if (!phone.value.matches(Regex("^\\+?\\d{10,13}\$"))) {
+                        phoneError = "Please enter a valid phone number"
+                    } else if (name.value.isEmpty()) {
+                        nameError = "Name cannot be empty"
+                    } else {
+                        // Proceed with registration if validation passes
+                        viewModel.register(
+                            RegisterRequest(
+                                email = email.value,
+                                password = password.value,
+                                phone = phone.value,
+                                name = name.value
+                            )
                         )
-                    )
-                }) {
+                        navigator.pop()
+                    }}) {
                 Text(
                     text = "SignUp"
                 )

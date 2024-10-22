@@ -3,11 +3,19 @@ package com.example.myproject.presentaion.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -45,19 +53,18 @@ class LoginScreen : Screen {
 
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = MainViewModel()
-        val email = remember {
-            mutableStateOf("")
-        }
-        val password = remember {
-            mutableStateOf("")
-        }
+        val email = remember { mutableStateOf("") }
+        val password = remember { mutableStateOf("") }
         var passwordVisible by remember { mutableStateOf(false) }
-
+        var emailError by remember { mutableStateOf("") }
+        var passwordError by remember { mutableStateOf("") }
 
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.loginpage),
@@ -76,35 +83,82 @@ class LoginScreen : Screen {
             )
             Spacer(modifier = Modifier.height(10.dp))
 
-            CustomOutlinedTextField(email.value, onValueChange = { email.value = it }, "Email")
+            CustomOutlinedTextField(
+                value = email.value,
+                onValueChange = {
+                    email.value = it
+                    emailError = ""
+                },
+                label = "Email",
+                leading = Icons.Default.Email
+            )
+            if (emailError.isNotEmpty()) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(0.9f)
+                        .padding(top = 4.dp, start = 20.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = null,
+                        tint = Color.Red,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = emailError,
+                        color = Color.Red,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(10.dp))
 
             OutlinedTextField(
                 value = password.value,
-                onValueChange = { password.value = it },
+                onValueChange = {
+                    password.value = it
+                    passwordError = ""
+                },
                 label = { Text("Password", fontSize = 16.sp) },
                 trailingIcon = {
-                    IconButton(
-                        onClick = {
-                            passwordVisible = !passwordVisible
-                        },
-                    ) {
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
                         Icon(
-                            painter = if (passwordVisible) painterResource(R.drawable.eye) else
-                                painterResource(R.drawable.eyeoff),
-                            contentDescription = "",
+                            painter = if (passwordVisible) painterResource(R.drawable.eye) else painterResource(R.drawable.eyeoff),
+                            contentDescription = null,
                             tint = if (passwordVisible) Color.Black else Color.Gray
                         )
                     }
                 },
-                visualTransformation = if (passwordVisible)
-                    VisualTransformation.None else PasswordVisualTransformation(),
-                textStyle = LocalTextStyle.current.copy(
-                    fontSize = 18.sp,
-                    color = Color.Black
-                ) // Change the text style
+                leadingIcon = {
+                    Icon(imageVector = Icons.Default.Lock, contentDescription = null)
+                },
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                textStyle = LocalTextStyle.current.copy(fontSize = 18.sp, color = Color.Black)
             )
+            if (passwordError.isNotEmpty()) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(0.9f)
+                        .padding(top = 4.dp, start = 20.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = null,
+                        tint = Color.Red,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = passwordError,
+                        color = Color.Red,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
 
             Button(
                 modifier = Modifier
@@ -112,27 +166,30 @@ class LoginScreen : Screen {
                     .width(250.dp)
                     .height(50.dp),
                 onClick = {
-                    viewModel.login(
-                        LoginRequest(
-                            email = email.value,
-                            password = password.value,
-                        ),
-                        onSuccess = {
-                            navigator.push(MainScreen(it))
-                        }
-                    )
-                }) {
-                Text(
-                    text = "Login"
-                )
-            }
-            TextButton(onClick = { navigator.push(RegisterScreen()) }) {
-                Text(
-                    text = "don't have an account ? SignUp",
-                    fontSize = 15.sp, color = Color.Gray
-                )
+                    if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email.value).matches()) {
+                        emailError = "Please enter a valid email address"
+                    } else if (password.value.isEmpty()) {
+                        passwordError = "Password cannot be empty"
+                    } else {
+                        viewModel.login(
+                            LoginRequest(email = email.value, password = password.value),
+                            onSuccess = {
+                                navigator.push(MainScreen(it))
+                            }
+                        )
+                    }
+                }
+            ) {
+                Text(text = "Login")
             }
 
+            TextButton(onClick = { navigator.push(RegisterScreen()) }) {
+                Text(
+                    text = "Don't have an account? Sign Up",
+                    fontSize = 15.sp,
+                    color = Color.Gray
+                )
+            }
         }
     }
 }
