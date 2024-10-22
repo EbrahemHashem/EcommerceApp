@@ -225,7 +225,7 @@ fun HomeContent(token: String, navigator: Navigator) {
                                             .padding(8.dp)
                                             .clickable {
                                                 isFavourite = !isFavourite
-//                                                    favourite toast
+//                                              favourite toast
                                                 viewModel.getAddFvourites(
                                                     token = token,
                                                     addOrDeleteFavouriteRequest = AddOrDeleteFavouriteRequest(

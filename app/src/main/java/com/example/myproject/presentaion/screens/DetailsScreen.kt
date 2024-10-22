@@ -1,6 +1,7 @@
 package com.example.myproject.presentaion.screens
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -32,6 +33,7 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,11 +46,14 @@ import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -56,21 +61,29 @@ import coil.compose.AsyncImage
 import coil.size.Size
 import com.example.myproject.data.model.LoginRequest
 import com.example.myproject.data.model.Product
+import com.example.myproject.data.model.cart.AddOrDeleteCartRequest
+import com.example.myproject.data.model.favourite.AddOrDeleteFavouriteRequest
+import com.example.myproject.presentaion.viewmodel.MainViewModel
 import org.w3c.dom.Text
 import java.util.Spliterator
 import java.util.function.Predicate.not
 
 
 class DetailsScreen(val product: Product) : Screen {
+
+
+
+
     @Composable
     override fun Content() {
-        Details(product)
+        Details(product,viewModel())
     }
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun Details(product: Product) {
+fun Details(product: Product,viewModel: MainViewModel) {
+    val context = LocalContext.current
     val navigator = LocalNavigator.currentOrThrow
 
     Scaffold(
@@ -87,14 +100,18 @@ fun Details(product: Product) {
                 IconButton(
                     onClick = { navigator.pop() },
                 ) {
-                    Icon(Icons.Default.KeyboardArrowLeft, contentDescription = null)
+                    Icon(Icons.Default.ArrowBack, contentDescription = null)
                 }
                 // fav icon
-                IconButton(
-                    onClick = { /*navigate to fav screen*/ },
-                ) {
-                    Icon(Icons.Default.FavoriteBorder, contentDescription = "Localized description")
-                }
+//                IconButton(
+//                    /*navigate to fav screen*/
+//                    onClick = {
+//                        },
+//
+//
+//                ) {
+//                    Icon(Icons.Default.FavoriteBorder, contentDescription = "Localized description")
+//                }
             }
         }) {
         Column(
@@ -162,7 +179,23 @@ fun Details(product: Product) {
                 shape = RoundedCornerShape(12.dp),
 
                 onClick = {
-//                    navigate to cart screen
+//                    add to cart
+                    viewModel.getAddCart(
+                        token = viewModel.loginResponse.value?.data?.token?:"",
+                        addOrDeleteCartRequest = AddOrDeleteCartRequest (
+                            productId = product.id
+                        ),
+                        onSuccess = {
+                            Toast
+                                .makeText(
+                                    context,
+                                    "$it",
+                                    Toast.LENGTH_SHORT
+                                )
+                                .show()
+
+                        })
+
                 },
                 colors = ButtonDefaults.buttonColors(Color.Black)
 
