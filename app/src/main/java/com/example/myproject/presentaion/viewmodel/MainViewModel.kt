@@ -6,6 +6,7 @@ import com.example.myproject.data.model.CategoriesRequest
 import com.example.myproject.data.model.HomeResponse
 import com.example.myproject.data.model.LoginRequest
 import com.example.myproject.data.model.LoginResponse
+import com.example.myproject.data.model.Product
 import com.example.myproject.data.model.RegisterRequest
 import com.example.myproject.data.model.RegisterResponse
 import com.example.myproject.data.model.cart.AddOrDeleteCartRequest
@@ -222,6 +223,29 @@ class MainViewModel : ViewModel() {
 
     fun selectItem(index: Int) {
         _selectedItem.value = index
+    }
+
+    private val _favouriteStates = MutableStateFlow<Map<Int, Boolean>>(emptyMap())
+    val favouriteStates: StateFlow<Map<Int, Boolean>> get() = _favouriteStates
+
+    fun loadFavouriteStates(products: List<Product>) {
+        viewModelScope.launch {
+            val favouritesMap = products.associate { it.id to it.in_favorites }
+            _favouriteStates.value = favouritesMap
+        }
+    }
+
+    // Method to toggle the favorite status of a product
+    fun toggleFavourite(productId: Int) {
+        val currentFavorites = _favouriteStates.value.toMutableMap()
+        val isFavourite = currentFavorites[productId] ?: false
+        currentFavorites[productId] = !isFavourite // Toggle favorite status
+        _favouriteStates.value = currentFavorites
+    }
+
+    // Check if a product is favorite based on its id
+    fun isProductFavourite(productId: Int): Boolean {
+        return _favouriteStates.value[productId] ?: false
     }
 
 

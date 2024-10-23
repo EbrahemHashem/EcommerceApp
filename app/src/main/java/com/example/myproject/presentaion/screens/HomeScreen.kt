@@ -53,6 +53,7 @@ import com.example.myproject.R
 import com.example.myproject.data.model.cart.AddOrDeleteCartRequest
 import com.example.myproject.data.model.favourite.AddOrDeleteFavouriteRequest
 import com.example.myproject.util.FavouriteButton
+import kotlinx.coroutines.flow.map
 
 @Composable
 fun HomeContent(token: String, navigator: Navigator) {
@@ -141,9 +142,11 @@ fun HomeContent(token: String, navigator: Navigator) {
                                 elevation = CardDefaults.cardElevation(8.dp),
                                 shape = RoundedCornerShape(12.dp) // Rounded corners for a softer look
                             ) {
-                                var isFavourite by remember { mutableStateOf(product.in_favorites) }
+                                val isFavourite by viewModel.favouriteStates
+                                    .map { it[product.id] ?: false }
+                                    .collectAsState(initial = false)
                                 Box(
-                                    modifier = Modifier.fillMaxSize() // Use Box to allow for overlay of elements
+                                    modifier = Modifier.fillMaxSize()
                                 ) {
                                     Column(
                                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -223,7 +226,7 @@ fun HomeContent(token: String, navigator: Navigator) {
                                             .align(Alignment.TopEnd)
                                             .padding(8.dp)
                                             .clickable {
-                                                isFavourite = !isFavourite
+                                                viewModel.toggleFavourite(product.id)
 //                                              favourite toast
                                                 viewModel.getAddFvourites(
                                                     token = token,

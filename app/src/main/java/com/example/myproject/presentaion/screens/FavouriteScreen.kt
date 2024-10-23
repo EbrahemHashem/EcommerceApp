@@ -138,7 +138,6 @@ fun FavouriteContent(token: String, viewModel: MainViewModel) {
                                                     Toast.LENGTH_SHORT
                                                 )
                                                 .show()
-
                                         })
                                 },
                                 shape = RoundedCornerShape(8.dp),
