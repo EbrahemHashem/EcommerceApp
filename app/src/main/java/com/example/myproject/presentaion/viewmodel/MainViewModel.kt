@@ -189,7 +189,6 @@ class MainViewModel : ViewModel() {
         }
     }
 
-
     //search
     private val _searchResponse = MutableStateFlow<SearchResponse?>(null)
     val searchResponse: StateFlow<SearchResponse?> = _searchResponse
