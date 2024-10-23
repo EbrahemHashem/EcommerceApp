@@ -1,5 +1,6 @@
 package com.example.myproject.presentaion.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,17 +28,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.myproject.data.model.cart.AddOrDeleteCartRequest
 import com.example.myproject.presentaion.viewmodel.MainViewModel
 
 @Composable
 
 fun CartContent(token: String, viewModel: MainViewModel){
     val screenWidth = LocalConfiguration.current.screenWidthDp
+    val context = LocalContext.current
     viewModel.getCartData(token = token, lang = "en")
     val cart = viewModel.cartResponse.collectAsState()
     Column(
@@ -109,7 +113,25 @@ fun CartContent(token: String, viewModel: MainViewModel){
                             )
 
                             Button(
-                                onClick = { /*TODO: Remove item from cart logic*/ },
+                                onClick = {
+                                    viewModel.getCartData(token = token, lang = "en")
+                                    viewModel.getAddCart(
+                                        token =token,
+                                        addOrDeleteCartRequest = AddOrDeleteCartRequest (
+                                            productId = it.product?.id
+                                        ),
+                                        onSuccess = {
+                                            Toast
+                                                .makeText(
+                                                    context,
+                                                    "$it",
+                                                    Toast.LENGTH_SHORT
+                                                )
+                                                .show()
+
+                                        })
+
+                                },
                                 shape = RoundedCornerShape(8.dp),
                                 modifier = Modifier
                                     .fillMaxWidth()
