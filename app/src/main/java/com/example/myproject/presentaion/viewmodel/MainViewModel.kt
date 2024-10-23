@@ -90,6 +90,24 @@ class MainViewModel : ViewModel() {
     }
 
 
+    private val _categoryResponse = MutableStateFlow<CategoriesRequest?>(null)
+    val categoryResponse: StateFlow<CategoriesRequest?> get() = _categoryResponse
+
+    //get category
+    fun getCategory(token: String, lang: String) {
+        viewModelScope.launch {
+            try {
+                val response =
+                    RetrofitInstance.apiService.getCategories(token, lang)
+                if (response.isSuccessful) {
+                    _categoryResponse.value = response.body()
+                }
+            } catch (Exception: Exception) {
+                println(Exception)
+            }
+        }
+    }
+
     //    favourites
     private val _favouriteResponse = MutableStateFlow<FavouritesResponse?>(null)
     val favouriteResponse: StateFlow<FavouritesResponse?> get() = _favouriteResponse

@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 
 
 @Composable
-fun FavouriteButton(isFavourite: Boolean = true) {
+fun FavouriteButton(isFavourite: Boolean = false) {
     Box(contentAlignment = Alignment.Center) {
         Canvas(modifier = Modifier.size(35.dp), onDraw = {
             drawCircle(color = Color.White)
