@@ -90,25 +90,6 @@ class MainViewModel : ViewModel() {
         }
     }
 
-
-    private val _categoryResponse = MutableStateFlow<CategoriesRequest?>(null)
-    val categoryResponse: StateFlow<CategoriesRequest?> get() = _categoryResponse
-
-    //get category
-    fun getCategory(token: String, lang: String) {
-        viewModelScope.launch {
-            try {
-                val response =
-                    RetrofitInstance.apiService.getCategories(token, lang)
-                if (response.isSuccessful) {
-                    _categoryResponse.value = response.body()
-                }
-            } catch (Exception: Exception) {
-                println(Exception)
-            }
-        }
-    }
-
     //    favourites
     private val _favouriteResponse = MutableStateFlow<FavouritesResponse?>(null)
     val favouriteResponse: StateFlow<FavouritesResponse?> get() = _favouriteResponse
@@ -148,8 +129,6 @@ class MainViewModel : ViewModel() {
         }
     }
 //    Cart
-//    ///////////////////////////////////
-
     private val _cartResponse = MutableStateFlow<CartResponse?>(null)
     val cartResponse: StateFlow<CartResponse?> get() = _cartResponse
     fun getCartData(token: String, lang: String) {
@@ -166,7 +145,6 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    ////////////////////////////////////
     fun getAddCart(
         token: String,
         addOrDeleteCartRequest: AddOrDeleteCartRequest,
@@ -227,24 +205,11 @@ class MainViewModel : ViewModel() {
     private val _favouriteStates = MutableStateFlow<Map<Int, Boolean>>(emptyMap())
     val favouriteStates: StateFlow<Map<Int, Boolean>> get() = _favouriteStates
 
-    fun loadFavouriteStates(products: List<Product>) {
-        viewModelScope.launch {
-            val favouritesMap = products.associate { it.id to it.in_favorites }
-            _favouriteStates.value = favouritesMap
-        }
-    }
-
-    // Method to toggle the favorite status of a product
     fun toggleFavourite(productId: Int) {
         val currentFavorites = _favouriteStates.value.toMutableMap()
         val isFavourite = currentFavorites[productId] ?: false
         currentFavorites[productId] = !isFavourite // Toggle favorite status
         _favouriteStates.value = currentFavorites
-    }
-
-    // Check if a product is favorite based on its id
-    fun isProductFavourite(productId: Int): Boolean {
-        return _favouriteStates.value[productId] ?: false
     }
 
 
