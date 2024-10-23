@@ -1,5 +1,6 @@
 package com.example.myproject.presentaion.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -42,6 +43,8 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
+import com.example.myproject.data.model.Product
+import com.example.myproject.data.model.cart.AddOrDeleteCartRequest
 import com.example.myproject.presentaion.viewmodel.MainViewModel
 import com.example.myproject.util.CustomBottomNavigationBar
 
@@ -49,6 +52,7 @@ import com.example.myproject.util.CustomBottomNavigationBar
 @Composable
 fun FavouriteContent(token: String, viewModel: MainViewModel) {
     val screenWidth = LocalConfiguration.current.screenWidthDp
+    val context = LocalContext.current
     viewModel.getFavourites(token = token, lang = "en")
     val favourites = viewModel.favouriteResponse.collectAsState()
     Column(
@@ -120,7 +124,23 @@ fun FavouriteContent(token: String, viewModel: MainViewModel) {
                             )
 
                             Button(
-                                onClick = { /*TODO: Add to cart logic*/ },
+                                onClick = {
+                                    viewModel.getAddCart(
+                                        token =token,
+                                        addOrDeleteCartRequest = AddOrDeleteCartRequest (
+                                            productId = it.product?.id
+                                        ),
+                                        onSuccess = {
+                                            Toast
+                                                .makeText(
+                                                    context,
+                                                    "$it",
+                                                    Toast.LENGTH_SHORT
+                                                )
+                                                .show()
+
+                                        })
+                                },
                                 shape = RoundedCornerShape(8.dp),
                                 modifier = Modifier
                                     .fillMaxWidth()
