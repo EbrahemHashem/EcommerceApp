@@ -143,8 +143,8 @@ fun HomeContent(token: String, navigator: Navigator) {
                                 shape = RoundedCornerShape(12.dp) // Rounded corners for a softer look
                             ) {
                                 val isFavourite by viewModel.favouriteStates
-                                    .map { it[product.id] ?: false }
-                                    .collectAsState(initial = false)
+                                    .map { it[product.id] ?: product.in_favorites }
+                                    .collectAsState(initial = product.in_favorites)
                                 Box(
                                     modifier = Modifier.fillMaxSize()
                                 ) {

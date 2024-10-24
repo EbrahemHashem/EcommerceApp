@@ -79,6 +79,11 @@ class MainViewModel : ViewModel() {
                     RetrofitInstance.apiService.getHomeData(token, lang)
                 if (response.isSuccessful) {
                     _homeResponse.value = response.body()
+
+                    val favouritesMap = response.body()?.data?.products?.associate { it.id to it.in_favorites }
+                    if (favouritesMap != null) {
+                        _favouriteStates.value = favouritesMap
+                    }
                 }
 
             } catch (Exception: Exception) {
